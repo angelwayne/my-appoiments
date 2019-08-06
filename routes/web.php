@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\SpecialtyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,3 +19,10 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+// Specialty
+
+Route::get('/specialities','SpecialtyController@index');
+Route::get('/specialities/crate','SpecialtyController@create');
+Route::get('/specialities/{specialty}/edit','SpecialtyController@edit');
+Route::POST('/specialities/storeSpecialty','SpecialtyController@store');
