@@ -19,7 +19,8 @@ class SpecialtyController extends Controller
     public function index()
     {
         //
-        return view ('specialties.index');
+        $specialities = Specialty::all();
+        return view ('specialties.index',compact('specialities'));
     }
 
     /**
@@ -33,6 +34,17 @@ class SpecialtyController extends Controller
         return view('specialties.create');
     }
 
+    private function performValidation(Request $request)
+    {
+        $rules =[
+            'name' =>'required|min:3',
+            'description' =>'required'
+        ];
+        $message=[
+            'name.min'=>'Necesito el nombre completo 😁'
+        ]; // this is optional
+        $this->validate($request , $rules,$message);
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -41,7 +53,16 @@ class SpecialtyController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //dd($request->all());
+        $this->performValidation($request);
+
+        $specialty= new Specialty();
+        $specialty->name = $request->input('name');
+        $specialty->description = $request->input('description');
+        $specialty->save(); //INSERT
+
+        $notification="La especialidad ".$specialty->name." se ha registrado corectamente";
+        return redirect('/specialities')->with(\compact('notification'));
     }
 
     /**
@@ -64,6 +85,8 @@ class SpecialtyController extends Controller
     public function edit(Specialty $specialty)
     {
         //
+        return view('specialties.edit',compact('specialty'));
+
     }
 
     /**
@@ -76,6 +99,16 @@ class SpecialtyController extends Controller
     public function update(Request $request, Specialty $specialty)
     {
         //
+         //dd($request->all());
+         $this->performValidation($request);
+
+
+        $specialty->name = $request->input('name');
+        $specialty->description = $request->input('description');
+        $specialty->save(); //UPDATE
+
+        $notification="La especialidad ".$specialty->name." se ha actualizado corectamente";
+        return redirect('/specialities')->with(\compact('notification'));
     }
 
     /**
@@ -87,5 +120,11 @@ class SpecialtyController extends Controller
     public function destroy(Specialty $specialty)
     {
         //
+        $deleteName=$specialty->name;
+        $specialty->delete();
+
+        $notification="La especialidad ".$deleteName." se ha eliminado corectamente";
+        return redirect('/specialities')->with(\compact('notification'));
+
     }
 }

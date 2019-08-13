@@ -23,6 +23,14 @@ Route::get('/home', 'HomeController@index')->name('home');
 // Specialty
 
 Route::get('/specialities','SpecialtyController@index');
-Route::get('/specialities/crate','SpecialtyController@create');
+Route::get('/specialities/crate','SpecialtyController@create'); // form registerd
 Route::get('/specialities/{specialty}/edit','SpecialtyController@edit');
-Route::POST('/specialities/storeSpecialty','SpecialtyController@store');
+
+Route::POST('/specialities/storeSpecialty','SpecialtyController@store');// sending form
+Route::put('/specialities/{specialty}','SpecialtyController@update');
+Route::delete('/specialities/{specialty}', 'SpecialtyController@destroy');
+
+// Doctors
+Route::Resource('doctors','DoctorContorller');
+
+// Patients
