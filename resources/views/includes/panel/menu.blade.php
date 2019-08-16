@@ -1,5 +1,5 @@
 <h6 class="navbar-heading text-muted">
- @if (auth()->user()->role=='admin') 
+ @if (auth()->user()->role=='admin')
     Gestionar Datos
 @else
     Menu
@@ -30,7 +30,7 @@
     </a>
     @elseif(auth()->user()->role=='doctor')
             <li class="nav-item">
-            <a class="nav-link" href="/home">
+            <a class="nav-link" href="/schedule">
                 <i class="ni ni-calendar-grid-58 text-danger"></i> Gestionar Horario
             </a>
             </li>
