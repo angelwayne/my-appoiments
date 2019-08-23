@@ -45,14 +45,16 @@ class ScheduleController extends Controller
         $morning_end=$request->input('morning_end');
         $afternoon_start=$request->input('afternoon_start');
         $afternoon_end=$request->input('afternoon_end');
-        $erros=[];
+
+        $errors=[];
+
         for ($i=0; $i < 7; $i++) {
             # code...
             if($morning_start[$i] > $morning_end[$i]){
-            $errors[]="Las horas del turno mañana son inconsistentes para el dia $i.";
+            $errors[]="Las horas del turno mañana son inconsistentes para el dia ".$this->days[$i];
             }
             if($afternoon_start[$i] > $afternoon_end[$i]){
-            $errors[]="Las horas del turno vespertino son inconsistentes para el dia $i.";
+            $errors[]="Las horas del turno vespertino son inconsistentes para el dia ".$this->days[$i];
             }
 
             WorkDay::updateOrCreate(
@@ -80,18 +82,11 @@ class ScheduleController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
 
-    }
-
+    private $days=[
+        'Lunes','Martes','Miercoles',
+        'Jueves','Viernes','Sabado','Domingo'
+    ];
     /**
      * Show the form for editing the specified resource.
      *
@@ -100,22 +95,27 @@ class ScheduleController extends Controller
      */
     public function edit()
     {
-        //
-        $days=[
-            'Lunes','Martes','Miercoles',
-            'Jueves','Viernes','Sabado','Domingo'
-        ];
+
         $WorkDays=WorkDay::where('user_id',auth()->id())->get();
 
 
-       $WorkDays->map(function ($workDay) {
-           $workDay->morning_start= (new Carbon($workDay->morning_start))->format('g:i A');
-           $workDay->morning_end= (new Carbon( $workDay->morning_end))->format('g:i A');
-           $workDay->afternoon_start= (new Carbon( $workDay->afternoon_start))->format('g:i A');
-           $workDay->afternoon_end= (new Carbon( $workDay->afternoon_end))->format('g:i A');
-           return $workDay;
-       });
+        if(count($WorkDays) > 0) {
+                $WorkDays->map(function ($workDay) {
+                $workDay->morning_start= (new Carbon($workDay->morning_start))->format('g:i A');
+                $workDay->morning_end= (new Carbon( $workDay->morning_end))->format('g:i A');
+                $workDay->afternoon_start= (new Carbon( $workDay->afternoon_start))->format('g:i A');
+                $workDay->afternoon_end= (new Carbon( $workDay->afternoon_end))->format('g:i A');
+                return $workDay;
+            });
+        } else {
+            $WorkDays = collect();
+            for($i= 0;$i<7;$i++)
+            $WorkDays->push(new WorkDay());
+        }
+
+      
         // dd($WorkDays->toArray());
+        $days= $this->days;
         return view ('schedule',compact('WorkDays','days'));
     }
 

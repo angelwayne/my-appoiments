@@ -55,8 +55,19 @@
             <div class="form-group">
                 <label for="password">🔑 Contraseña </label>
                 <input type="text" name="password" id="password" value="" class="form-control" >
-                <p>Ingrese un valor solo si desea modificar la contraseña</p> 
+                <p>Ingrese un valor solo si desea modificar la contraseña</p>
             </div>
+
+            <div class="form-group">
+                <label for="specialties">📑 Especialidades</label>
+                <select name="specialties[]" id="specialties" class="form-control selectpicker"
+                data-style="btn-default" multiple title="Seleccione una o varias" >
+                    @foreach ($specialties as $specialty)
+                        <option value="{{$specialty->id}}">{{$specialty->name}}</option>
+                    @endforeach
+                </select>
+            </div>
+
     <button type="submit" class="btn btn-primary">
         Guardar
     </button>
@@ -65,4 +76,13 @@
 </div>
 </div>
 
+
+@endsection
+
+@section('scripts')
+    <script>
+            $(document).ready(()=>{
+                $("#specialties").selectpicker('val',@json($specialty_id));
+            });
+    </script>
 @endsection

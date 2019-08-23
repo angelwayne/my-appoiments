@@ -30,6 +30,7 @@ class SpecialtyController extends Controller
     public function create()
     {
         //
+
         return view('specialties.create');
     }
 

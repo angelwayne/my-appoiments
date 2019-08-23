@@ -1,4 +1,6 @@
 <?php
+
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\SpecialtyController;
 
 /*
@@ -43,5 +45,15 @@ Route::middleware(['auth', 'doctor'])->namespace('Doctor')->group(function () {
 
     });
 
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/appointments/create','AppointmentController@create');
+    Route::POST('/appointments','AppointmentController@store');
+
+    // JSON
+    Route::get('/specialties/{specialty}/doctors','Api\SpecialtyContorller@doctors');
+    Route::get('/schedule/hours','Api\ScheduleController@hours');
+
+});
 
 

@@ -55,6 +55,16 @@
                 <label for="password">🔑 Contraseña</label>
                 <input type="text" name="password" id="password" value="{{ str_random(6) }}" class="form-control" >
             </div>
+
+            <div class="form-group">
+                <label for="specialties">📑 Especialidades</label>
+                <select name="specialties[]" id="specialties" class="form-control selectpicker"
+                data-style="btn-default" multiple title="Seleccione una o varias" >
+                    @foreach ($specialties as $specialty)
+                        <option value="{{$specialty->id}}">{{$specialty->name}}</option>
+                    @endforeach
+                </select>
+            </div>
     <button type="submit" class="btn btn-primary">
         Guardar
     </button>
