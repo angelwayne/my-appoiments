@@ -28,35 +28,63 @@
             @endforeach
 
      @endif
-    <form action="{{ url('patients')}}" method="POST">
+    <form action="{{ url('appointments')}}" method="POST">
         @csrf
-        <div class="form-group">
+
+       <div class="form-group">
+           <label for="description">📝 Descripcion</label>
+           <input class="form-control"  placeholder="Describe brevemente el motivo de la consulta"
+            type="text" name="description" id="description">
+       </div>
+       <div class="form-row">
+        <div class="form-group col-md-6">
                <label for="specilty">📑 Especialidad</label>
                <select name="specialty_id" id="specialty" class="form-control" required>
-                <option value="">Seleccionar especia</option>
+                <option value="">Seleccionar especialidad</option>
                 @foreach ($specialties as $specialty)
                <option value="{{$specialty->id}}">{{$specialty->name}}</option>
                 @endforeach
                </select>
         </div>
-
-           <div class="form-group">
-               <label for="doctor">🤵 Doctor</label>
+           <div class="form-group col-md-6">
+               <label for="doctor">👨‍⚕️ Doctor</label>
                <select name="doctor_id" id="doctor" class="form-control">
 
             </select>
            </div>
+        </div>
            <div class="form-group">
                 <label for="fecha">📅 Fecha</label>
-                <input type="text" name="fecha" class="form-control datepicker"
-                 value="{{ date('Y-m-d') }}" data-date-format="yyyy-mm-dd" 
-                 data-date-start-date="{{ date('Y-m-d') }}" data-date-end-date="+30d" >
+                <input type="text" name="fecha" class="form-control datepicker" value="{{ date('Y-m-d') }}"
+                id="date"
+                data-date-format="yyyy-mm-dd"
+                data-date-start-date="{{ date('Y-m-d') }}"
+                data-date-end-date="+30d" >
             </div>
             <div class="form-group">
                     <label for="hora">⌚ Hora de Atencion</label>
-                    <input type="text" name="hora" id="name"
-            class="form-control" >
+                    <div id="hours" >
+                        <div class="alert alert-info" role="alert">
+                            Selecciona un medico y fecha para ver sus horarios disponibles.
+                        </div>
+                    </div>
             </div>
+            <div class="form-group">
+                <label for="type">🀄 Tipo de Consulta</label>
+                <br>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="type1" cheked name="type" class="custom-control-input">
+                    <label class="custom-control-label" for="type1">Consulta</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="type2" name="type" class="custom-control-input">
+                    <label class="custom-control-label" for="type2">Analisis Clinicos</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="type3" name="type" class="custom-control-input">
+                    <label class="custom-control-label" for="type3">Cirugia</label>
+                </div>
+        </div>
             <div class="form-group">
                     <label for="phone">📱 Telefono</label>
                     <input type="text" name="phone" id="name" value="{{ old('phone') }}" class="form-control" >
@@ -74,25 +102,5 @@
 
 @section('scripts')
 <script src="{{ asset('vendor/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
-<Script>
-    let $doctor;
-    $(function () {
-        const $specialty =  $('#specialty');
-        $doctor=$('#doctor');
-
-       $specialty.change(() =>{
-        const specialtyId = $specialty.val()
-        const url = `/specialties/${specialtyId}/doctors`;
-        $.getJSON(url, onDoctorsLoaded);
-    });
-});
-
-    function onDoctorsLoaded(doctors) {
-        let htmlOption='';
-           doctors.forEach(doctor => {
-               htmlOption += `<option value="${doctor.id}">${doctor.name}</option>`;
-           });
-    $doctor.html(htmlOption)
-    }
-</Script>
+<script src="{{ asset('/js/appointments/create.js') }}"></Script>
 @endsection

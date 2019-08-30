@@ -19,28 +19,65 @@ class ScheduleController extends Controller
         ];
        $this->validate($request,$rules);
 
-        $date = $request->input('date'); 
+        $date = $request->input('date');
         $dateCarbon = new Carbon($date);
 
-        // dayOfWeek 
+        // dayOfWeek
         //from Carbon 0 (sunday) - 6 (saturday)
         // WorkDay: 0 (Monday) - 6 (sundat)
         $i=$dateCarbon->dayOfWeek;
         $day= ($i==0 ? 6 : $i-1);
-        
-        $doctorId = $request->input('doctor_Id'); 
 
-        $workDays = WorkDay::where('status',true) 
+        $doctorId = $request->input('doctor_Id');
+
+        $workDays = WorkDay::where('status',true)
         ->where('day',$day)
-        ->where('user_id',$doctorId)->get();
+        ->where('user_id',$doctorId)
+        ->first([
+            'morning_start','morning_end',
+            'afternoon_start','afternoon_end'
+            ]);
 
-        dd($workDays);
+        if (!$workDays) {
+            # code...
+            return[];
+        }
 
-          /*
-            $table->time('morning_start');
-            $table->time('morning_end');
-            $table->time('afternoon_start');
-            $table->time('afternoon_end');
-            $table->unsignedInteger('user_id'); */
+        $morningIntervals=$this->getIntervls(
+                                $workDays->morning_start,
+                                $workDays->morning_end);
+
+        $afternoonIntervals=$this->getIntervls(
+                                $workDays->afternoon_start,
+                                $workDays->afternoon_end);
+            // http://my-appoiments.test.com/schedule/hours?date=2019-08-22&doctor_Id=3
+
+            $data =[];
+            $data['morning']=$morningIntervals;
+            $data['afternoon']=$afternoonIntervals;
+            return $data;
+
+
+    }
+
+    private function getIntervls($start ,$end)
+    {
+
+        $start = new Carbon ($start);
+        $end = new Carbon ($end);
+
+
+        $intervals=[];
+        while ($start < $end) {
+            $interval=[];
+
+            $interval['start'] = $start->format('g:i A');
+            $start->addMinutes(30);
+            $interval['end'] = $start->format('g:i A');
+
+            $intervals[]= $interval;
+
+            }
+        return $intervals;
     }
 }

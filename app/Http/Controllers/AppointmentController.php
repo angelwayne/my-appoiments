@@ -24,7 +24,19 @@ class AppointmentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data= $request->only([
+            'description',
+            'specialty_id',
+            'doctor_id',
+            'patient_id',
+            'schedule_date',
+            'schedule_time',
+            'type'
+        ]);
+        Appointment::crete($data);
+
+        $notification='La cita ha sido registrad Exitosamente';
+        return bakc()->with(compact('notifiaction'));
     }
 
     /**
