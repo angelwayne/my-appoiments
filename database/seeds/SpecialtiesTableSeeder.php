@@ -1,6 +1,7 @@
 <?php
 
 use App\Specialty;
+use App\User;
 
 use Illuminate\Database\Seeder;
 
@@ -14,17 +15,21 @@ class SpecialtiesTableSeeder extends Seeder
     public function run()
     {
         //
-        Specialty::create([
-            'name'=>'Oftafmologia',
-            'description'=>'Es la especialidad médica que estudia las enfermedades de ojo y su tratamiento.'
-        ]);
-        Specialty::create([
-            'name'=>'Neurología',
-            'description'=>'Es la especialidad médica que trata los trastornos del sistema nervioso. 🧠'
-        ]);
-        Specialty::create([
-            'name'=>'Pediatría',
-            'description'=>'Parte de la medicina que se ocupa del estudio del crecimiento y el desarrollo de los niños hasta la adolescencia'
-        ]);
+      $specialties = [
+          'Oftalmologia',
+          'Pediatria',
+          'Neurologia'
+      ];
+      foreach($specialties as $specialtyName){
+          $specialty = Specialty::create([
+              'name'=>$specialtyName
+          ]);
+
+          $specialty->users()->saveMany(
+            factory(User::class, 3)->states('doctor')->make()
+          );
+      }
+
+      User::find(3)->specialties()->save($specialty);
     }
 }
