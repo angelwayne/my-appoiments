@@ -8,6 +8,7 @@ use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Interfaces\ScheduleServiceInterface;
+use Dotenv\Validator;
 
 class AppointmentController extends Controller
 {
@@ -56,7 +57,13 @@ class AppointmentController extends Controller
             para su cita'
         ];
 
-        $this->validate($request, $rules, $messages);
+        $validator=Validator::make($request->all(), $rules, $messages);
+
+        if($validator->fails()){
+            return back()
+            ->withErrors($validator)
+            ->withInput();
+        }
 
         $data= $request->only([
             'description',
