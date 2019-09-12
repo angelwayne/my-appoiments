@@ -3,15 +3,35 @@
 namespace App\Http\Controllers;
 
 use App\Appointment;
+use App\CancelAppointment;
 use App\Specialty;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Interfaces\ScheduleServiceInterface;
-use Dotenv\Validator;
+use Validator;
 
 class AppointmentController extends Controller
 {
+    public function index()
+    {
+        //patiente =>
+        //docotor =>
+        // admin => all()
+
+        $pendingAppointments=Appointment::where('status','Reservada')
+            ->where('patient_id',auth()->id())
+            ->paginate(10);
+        $confirmedAppointments=Appointment::where('status','Confirmada')
+            ->where('patient_id',auth()->id())
+            ->paginate(10);
+
+        $oldAppointments=Appointment::whereIn('status',['Atendida','Cancelada'])
+        ->where('patient_id',auth()->id())
+        ->paginate(10);
+
+       return view ('appointments.index',compact('pendingAppointments','confirmedAppointments','oldAppointments'));
+    }
 
     public function create(ScheduleServiceInterface $Scheduleservice)
     {
@@ -44,7 +64,7 @@ class AppointmentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, ScheduleServiceInterface $Scheduleservice)
     {
         $rules =[
             'description'=> 'required',
@@ -58,6 +78,23 @@ class AppointmentController extends Controller
         ];
 
         $validator=Validator::make($request->all(), $rules, $messages);
+
+        $validator->after(function ($validator) use ($request,$Scheduleservice) {
+            $date= $request->input('schedule_date');
+            $doctorId= $request->input('doctor_id');
+            $schedule_time= $request->input('schedule_time');
+            if($date && $doctorId && $schedule_time )
+            {
+                $start= new Carbon($schedule_time);
+            } else {
+                return;
+            }
+
+            if (!$Scheduleservice->isAvilableInterval($date,$doctorId,$start)) {
+                $validator->errors()
+                ->add('Avilable_TIme', 'La hora releccionad ya se encuentra reservada por otro paciente');
+            }
+        });
 
         if($validator->fails()){
             return back()
@@ -85,15 +122,29 @@ class AppointmentController extends Controller
         //return redirect('/appointments');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Appointment  $appointment
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Appointment $appointment)
+    public function showCancelForm(Appointment $appointment)
     {
-        //
+        if ($appointment->status ==='Confirmada') {
+            # code...
+            return view('appointments.cancel', compact('appointment'));
+        }
+        return redirect('/appointments');
+
+    }
+    public function cancel(Appointment $appointment,  Request $request)
+    {
+        if ($request->has('justification')){
+            $cancellation = new CancelAppointment();
+            $cancellation->justification = $request->input('justification');
+            $cancellation->cancelled_by= auth()->id();
+            $appointment->cancellation()->save($cancellation);
+
+        }
+        $appointment->status ='Cancelada';
+        $appointment->save();
+
+        $notification='La cita ha sido cancelada corectamente';
+                return redirect('/appointments')->with(compact('notification'));
     }
 
     /**

@@ -8,6 +8,15 @@ use Carbon\Carbon;
 
 class ScheduleService implements ScheduleServiceInterface
 {
+    public function isAvilableInterval ($date, $doctorId, Carbon $start)
+    {
+        $exists=Appointment::where('doctor_id',$doctorId)
+            ->where('schedule_date',$date)
+            ->where('schedule_time',$start->format('H:i:s'))
+            ->exists();
+
+        return !$exists;
+    }
 
     private function getDayFromDate($date)
     {
@@ -68,16 +77,13 @@ class ScheduleService implements ScheduleServiceInterface
 
             $interval['start'] = $start->format('g:i A');
 
-            $exists=Appointment::where('doctor_id',$doctorId)
-            ->where('schedule_date',$date)
-            ->where('schedule_time',$start->format('H:i:s'))
-            ->exists();
+            $avilable=$this->isAvilableInterval($date,$doctorId,$start);
 
             $start->addMinutes(30);
             $interval['end'] = $start->format('g:i A');
 
             //dd($exists);
-                if(!$exists){
+                if($avilable){
                     $intervals[]= $interval;
                 }
             }

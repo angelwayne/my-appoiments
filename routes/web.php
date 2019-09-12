@@ -50,6 +50,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/appointments/create','AppointmentController@create');
     Route::POST('/appointments','AppointmentController@store');
 
+    /*
+    /appointment -> Verificar
+    -> Que variable pasar a la vista
+    -> 1  unico blade (Condiciones )
+    */
+    Route::get('/appointments','AppointmentController@index');
+    Route::get('/appointments/{appointment}/cancel','AppointmentController@showCancelForm');
+
+    Route::post('/appointments/{appointment}/cancel','AppointmentController@cancel');
+
+
     // JSON
     Route::get('/specialties/{specialty}/doctors','Api\SpecialtyContorller@doctors');
     Route::get('/schedule/hours','Api\ScheduleController@hours');
