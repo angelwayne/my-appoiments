@@ -56,6 +56,8 @@ Route::middleware(['auth'])->group(function () {
     -> 1  unico blade (Condiciones )
     */
     Route::get('/appointments','AppointmentController@index');
+    Route::get('/appointments/{appointment}','AppointmentController@show');
+
     Route::get('/appointments/{appointment}/cancel','AppointmentController@showCancelForm');
 
     Route::post('/appointments/{appointment}/cancel','AppointmentController@cancel');

@@ -3,26 +3,19 @@
     <table class="table align-items-center table-flush">
         <thead class="thead-light">
         <tr>
-            <th scope="col">Description</th>
             <th scope="col">Especialidad</th>
-            <th scope="col">Doctor </th>
             <th scope="col">Fecha</th>
             <th scope="col">Hora</th>
-            <th scope="col">Tipo</th>
             <th scope="col">Estado</th>
+            <th scope="col">Opciones</th>
         </tr>
         </thead>
         <tbody>
             @foreach ($oldAppointments as $appointment)
         <tr>
-            <th scope="row">
-            {{ $appointment->description}}
-            </th>
-            <td>
+
+            <td scope="row">
             {{$appointment->specialty->name}}
-            </td>
-            <td>
-            {{$appointment->doctor->name}}
             </td>
             <td>
             {{$appointment->schedule_date}}
@@ -31,11 +24,10 @@
             {{$appointment->schedule_time_12}}
             </td>
             <td>
-            {{$appointment->type}}
-            </td>
-
-            <td>
             {{$appointment->status}}
+            </td>
+            <td>
+            <a class="btn btn-dribbble btn-sm" href="{{ url('/appointments/'.$appointment->id) }}">📑 Ver</a>
             </td>
         </tr>
         @endforeach

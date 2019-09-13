@@ -33,6 +33,11 @@ class AppointmentController extends Controller
        return view ('appointments.index',compact('pendingAppointments','confirmedAppointments','oldAppointments'));
     }
 
+    public function show(Appointment $appointment)
+    {
+        return view('appointments.show', compact('appointment'));
+    }
+
     public function create(ScheduleServiceInterface $Scheduleservice)
     {
         //
