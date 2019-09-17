@@ -37,6 +37,14 @@ Route::middleware(['auth', 'admin'])->namespace('Admin')->group(function () {
 
     // Patients
     Route::Resource('patients','PatientController');
+
+    // Charts
+    Route::get('/charts/appointsments/line','ChartController@appointmentsLine');
+    Route::get('/charts/doctors/column','ChartController@doctorsColum');
+
+    //Api consumo interno ->doctorsColumn.js
+    Route::get('/charts/doctors/column/data','ChartController@doctorJson');
+
 });
 
 Route::middleware(['auth', 'doctor'])->namespace('Doctor')->group(function () {
@@ -59,8 +67,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/appointments/{appointment}','AppointmentController@show');
 
     Route::get('/appointments/{appointment}/cancel','AppointmentController@showCancelForm');
-
     Route::post('/appointments/{appointment}/cancel','AppointmentController@cancel');
+
+    Route::post('/appointments/{appointment}/confirm','AppointmentController@confirm');
 
 
     // JSON

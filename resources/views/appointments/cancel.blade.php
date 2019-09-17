@@ -18,7 +18,28 @@
         {{ session('notification') }}
      </div>
      @endif
-     <p>Estas a punto de cancelar tu cita reservada con el medico {{$appointment->doctor->name}} para el dia: {{ $appointment->schedule_date }}</p>
+     @if ($role == 'patinet')
+        <p>
+            Estas a punto de cancelar tu cita reservada con el medico
+            {{$appointment->doctor->name}}
+            para el dia: {{ $appointment->schedule_date }}
+        </p>
+     @elseif($role == 'doctor')
+        <p>
+            Estas a punto de cancelar tu cita  con el paciente
+            {{$appointment->patient->name}}
+            para el dia: {{ $appointment->schedule_date }}
+            (hora: {{ $appointment->schedule_time_12}})
+        </p>
+     @else
+     <p>
+         Estas a punto de cancelar la cita reservada
+         por el paciente {{$appointment->patient->name}}
+         con el medico {{$appointment->doctor->name}}
+         para el dia: {{ $appointment->schedule_date }}
+         (hora: {{ $appointment->schedule_time_12}})
+    </p>
+    @endif
      <form action="{{ url('/appointments/'.$appointment->id.'/cancel')}}" method="POST">
          @csrf
 

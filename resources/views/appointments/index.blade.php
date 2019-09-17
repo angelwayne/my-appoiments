@@ -36,15 +36,15 @@
 <div class="tab-content" id="myTabContent">
 
     <div class="tab-pane fade show active" id="confirmed-appointment" role="tabpanel" aria-labelledby="home-tab">
-            @include('appointments.confirmed-appointments')
+            @include('appointments.tables.confirmed')
     </div>
 
     <div class="tab-pane fade" id="pending-appointment" role="tabpanel" aria-labelledby="profile-tab">
-        @include('appointments.pending-appointments')
+        @include('appointments.tables.pending')
     </div>
 
     <div class="tab-pane fade" id="old-appointment" role="tabpanel" aria-labelledby="profile-tab">
-            @include('appointments.old-appointments')
+            @include('appointments.tables.old')
     </div>
 </div>
 

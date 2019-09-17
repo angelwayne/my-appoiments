@@ -19,23 +19,53 @@ class AppointmentController extends Controller
         //docotor =>
         // admin => all()
 
-        $pendingAppointments=Appointment::where('status','Reservada')
+        $role=auth()->user()->role;
+
+        if ($role == 'admin') {
+            $pendingAppointments=Appointment::where('status','Reservada')
+            ->paginate(10);
+            $confirmedAppointments=Appointment::where('status','Confirmada')
+            ->paginate(10);
+            $oldAppointments=Appointment::whereIn('status',['Atendida','Cancelada'])
+            ->paginate(10);
+        }elseif($role == 'doctor')
+        {
+            $pendingAppointments=Appointment::where('status','Reservada')
+            ->where('doctor_id',auth()->id())
+            ->paginate(10);
+            $confirmedAppointments=Appointment::where('status','Confirmada')
+                ->where('doctor_id',auth()->id())
+                ->paginate(10);
+            $oldAppointments=Appointment::whereIn('status',['Atendida','Cancelada'])
+            ->where('doctor_id',auth()->id())
+            ->paginate(10);
+
+        }elseif($role == 'patinet')
+        {
+            $pendingAppointments=Appointment::where('status','Reservada')
             ->where('patient_id',auth()->id())
             ->paginate(10);
-        $confirmedAppointments=Appointment::where('status','Confirmada')
+            $confirmedAppointments=Appointment::where('status','Confirmada')
+                ->where('patient_id',auth()->id())
+                ->paginate(10);
+            $oldAppointments=Appointment::whereIn('status',['Atendida','Cancelada'])
             ->where('patient_id',auth()->id())
             ->paginate(10);
 
-        $oldAppointments=Appointment::whereIn('status',['Atendida','Cancelada'])
-        ->where('patient_id',auth()->id())
-        ->paginate(10);
+        }
 
-       return view ('appointments.index',compact('pendingAppointments','confirmedAppointments','oldAppointments'));
+
+       return view ('appointments.index',
+                compact(
+                    'pendingAppointments','confirmedAppointments','oldAppointments',
+                    'role'
+                ));
     }
 
     public function show(Appointment $appointment)
     {
-        return view('appointments.show', compact('appointment'));
+        $role = auth()->user()->role;
+        return view('appointments.show', compact('appointment','role'));
     }
 
     public function create(ScheduleServiceInterface $Scheduleservice)
@@ -129,9 +159,11 @@ class AppointmentController extends Controller
 
     public function showCancelForm(Appointment $appointment)
     {
+
         if ($appointment->status ==='Confirmada') {
             # code...
-            return view('appointments.cancel', compact('appointment'));
+            $role=auth()->user()->role;
+            return view('appointments.cancel', compact('appointment','role'));
         }
         return redirect('/appointments');
 
@@ -152,15 +184,15 @@ class AppointmentController extends Controller
                 return redirect('/appointments')->with(compact('notification'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Appointment  $appointment
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Appointment $appointment)
+
+    public function confirm(Appointment $appointment)
     {
         //
+        $appointment->status ='Confirmada';
+        $appointment->save();
+
+        $notification='La cita ha sido confirmada corectamente';
+                return redirect('/appointments')->with(compact('notification'));
     }
 
     /**
