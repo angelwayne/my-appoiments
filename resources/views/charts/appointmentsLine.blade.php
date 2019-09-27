@@ -33,7 +33,7 @@
         type: 'line'
     },
     title: {
-        text: 'Citas Registradas'
+        text: 'Citas Mensuales Registradas'
     },
     xAxis: {
         categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']

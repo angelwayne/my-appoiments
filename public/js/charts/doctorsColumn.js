@@ -3,10 +3,10 @@ const chart = Highcharts.chart('container', {
         type: 'column'
     },
     title: {
-        text: 'Medico mas activo por mes'
+        text: 'Top 5 Medicos mas activos'
     },
     subtitle: {
-        text: 'Informacion actualizada'
+        text: 'Ordenado por Mayor No. Citas Atendidas'
     },
     xAxis: {
         categories: [
@@ -16,7 +16,7 @@ const chart = Highcharts.chart('container', {
     yAxis: {
         min: 0,
         title: {
-            text: 'Citas atendidad' //unidad de medida
+            text: 'Citas atendidas' //unidad de medida
         }
     },
     tooltip: {
@@ -37,14 +37,42 @@ const chart = Highcharts.chart('container', {
     ]
 });
 
+let $start, $end;
+
 function fetchData()
 {
+    const startDate = $start.val();
+    const endDate =   $end.val();
+
     // Fecth Api
-    fetch('/charts/doctors/column/data')
-        .then(function(response){
-            return response.json();
-        })
-        .then(function(myJosn){
-            console.log(myJosn);
+    const url = `/charts/doctors/column/data?start=${startDate}&end=${endDate}`
+    fetch(url)
+        .then(response =>response.json())
+        .then(data => {
+            //console.log(data);
+            chart.xAxis[0].setCategories(data.categories)
+
+            if(chart.series.length > 0)
+            {
+                chart.series[2].remove();
+                chart.series[1].remove();
+                chart.series[0].remove();
+            }
+
+
+            chart.addSeries(data.series[0]); // Atendidas
+            chart.addSeries(data.series[1]); // Canceladas
+            chart.addSeries(data.series[2]); // Total Appointments
         })
 }
+
+$(function () {
+
+    $start=$('#startDate');
+    $end=$('#endDate');
+
+    fetchData();
+
+    $start.change(fetchData);
+    $end.change(fetchData);
+});
