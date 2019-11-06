@@ -72,9 +72,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/appointments/{appointment}/confirm','AppointmentController@confirm');
 
 
-    // JSON
-    Route::get('/specialties/{specialty}/doctors','Api\SpecialtyContorller@doctors');
-    Route::get('/schedule/hours','Api\ScheduleController@hours');
+
 
 });
 
