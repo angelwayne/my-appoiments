@@ -13,12 +13,12 @@ use Illuminate\Http\Request;
 |
 */
  // Login
-Route::POST('/login','AuthController@login');
+Route::POST('/login','Api\AuthController@login');
 
 // Public resources ->JSON
-Route::get('/specialties','SpecialtyContorller@index');
-Route::get('/specialties/{specialty}/doctors','SpecialtyContorller@doctors');
-Route::get('/schedule/hours','ScheduleController@hours');
+Route::get('/specialties','Api\SpecialtyContorller@index');
+Route::get('/specialties/{specialty}/doctors','Api\SpecialtyContorller@doctors');
+Route::get('/schedule/hours','Api\ScheduleController@hours');
 
 // Protected routes
 Route::middleware('auth:api')->group(function () {
